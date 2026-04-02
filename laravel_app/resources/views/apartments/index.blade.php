@@ -13,10 +13,21 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach($apartments as $apartment)
             <div class="bg-white rounded shadow p-4">
-                <img src="{{ $apartment->image ?? 'https://via.placeholder.com/400x200' }}" alt="" class="w-full h-40 object-cover rounded" />
+                @php
+                    $image = $apartment->image;
+                    $imageUrl = $image && preg_match('/^https?:\/\//i', $image)
+                        ? $image
+                        : asset($image ?: 'images/apartment-default.svg');
+                @endphp
+                <img
+                    src="{{ $imageUrl }}"
+                    alt="{{ $apartment->name }}"
+                    class="w-full h-40 object-cover rounded"
+                    onerror="this.onerror=null;this.src='{{ asset('images/apartment-default.svg') }}';"
+                />
                 <h3 class="mt-3 font-semibold text-lg">{{ $apartment->name }}</h3>
                 <p class="text-sm text-gray-600">{{ $apartment->location }}</p>
-                <p class="mt-2 font-bold">${{ number_format($apartment->price_per_month,2) }} / month</p>
+                <p class="mt-2 font-bold">₱{{ number_format($apartment->price_per_month,2) }} / month</p>
                 <div class="mt-3 flex justify-between items-center">
                     <a href="{{ route('apartments.show', $apartment) }}" class="text-sm text-blue-600">View</a>
                     @auth
