@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SessionProvider from "@/components/session-provider";
 import Navbar from "@/components/navbar";
+import ClientErrorSuppressor from "@/components/client-error-suppressor";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Apartment Booking System",
   description: "TypeScript + Next.js apartment booking system",
+  icons: [
+    { rel: "icon", url: "/favicon.ico", sizes: "256x256", type: "image/x-icon" },
+  ],
 };
 
 export default function RootLayout({
@@ -31,6 +35,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-slate-100 text-slate-900">
         <SessionProvider>
+          <ClientErrorSuppressor />
           <Navbar />
           <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
           <footer className="border-t bg-white">
