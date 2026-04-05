@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="Apartment placeholder">
+  <rect width="1200" height="700" fill="#e2e8f0" />
+  <rect x="120" y="140" width="960" height="420" rx="12" fill="#ffffff" />
+  <rect x="210" y="230" width="220" height="170" fill="#93c5fd" />
+  <rect x="490" y="230" width="220" height="170" fill="#60a5fa" />
+  <rect x="770" y="230" width="220" height="170" fill="#3b82f6" />
+  <text x="600" y="505" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" fill="#1e3a8a">Apartment Image</text>
+</svg>

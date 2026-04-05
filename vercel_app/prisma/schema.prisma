@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  emailVerified  DateTime?
+  password       String
+  isAdmin        Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  bookings       Booking[]
+  accounts       Account[]
+  sessions       Session[]
+}
+
+model Apartment {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  location      String
+  pricePerMonth Decimal   @db.Decimal(10, 2)
+  description   String?
+  image         String?
+  status        String    @default("available")
+  maxTenants    Int       @default(1)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  amenity       Amenity?
+  bookings      Booking[]
+}
+
+model Amenity {
+  id             String    @id @default(cuid())
+  apartmentId    String    @unique
+  wifi           Boolean   @default(false)
+  parking        Boolean   @default(false)
+  airConditioning Boolean  @default(false)
+  furnished      Boolean   @default(false)
+  gym            Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  apartment      Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id           String          @id @default(cuid())
+  userId       String
+  apartmentId  String
+  checkInDate  DateTime
+  checkOutDate DateTime
+  totalPrice   Decimal         @db.Decimal(10, 2)
+  status       String          @default("pending")
+  notes        String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  deletedAt    DateTime?
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apartment    Apartment       @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  payments     PaymentRecord[]
+}
+
+model PaymentRecord {
+  id                   String   @id @default(cuid())
+  bookingId            String
+  paymentMethod        String?
+  amount               Decimal  @db.Decimal(10, 2)
+  paymentStatus        String   @default("pending")
+  transactionReference String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  booking              Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+// NextAuth models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
